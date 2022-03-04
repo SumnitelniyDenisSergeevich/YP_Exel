@@ -5,9 +5,7 @@ using namespace std::literals;
 Sheet::~Sheet() {}
 
 void Sheet::SetCell(Position pos, std::string text) {
-    if (!pos.IsValid()) {
-        throw InvalidPositionException("invalid position"s);
-    }
+    ValidPosition(pos);
     if (!GetCell(pos)) {
         CreateCellIfExceptionDeleteCell(pos, text);
     }
@@ -20,10 +18,9 @@ void Sheet::SetCell(Position pos, std::string text) {
 const CellInterface* Sheet::GetCell(Position pos) const {
     return const_cast<Sheet*>(this)->GetCell(pos);
 }
+
 CellInterface* Sheet::GetCell(Position pos) {
-    if (!pos.IsValid()) {
-        throw InvalidPositionException("invalid position"s);
-    }
+    ValidPosition(pos);
     if (row_col_cell_.count(pos.row)) {
         if (row_col_cell_.at(pos.row).count(pos.col)) {
             return &row_col_cell_.at(pos.row).at(pos.col);
@@ -33,12 +30,10 @@ CellInterface* Sheet::GetCell(Position pos) {
 }
 
 void Sheet::ClearCell(Position pos) {
-    if (!pos.IsValid()) {
-        throw InvalidPositionException("invalid position"s);
-    }
+    ValidPosition(pos);
     if (GetCell(pos)) {
         if (row_col_cell_.at(pos.row).at(pos.col).IsReferenced()) {
-            row_col_cell_.at(pos.row).at(pos.col).Clear();
+            SetCell(pos, "");
         }
         else {
             EraseCell(pos);
@@ -118,5 +113,12 @@ void Sheet::CreateCellIfExceptionDeleteCell(Position pos, std::string text) {
     catch (CircularDependencyException& e) {
         EraseCell(pos);
         throw CircularDependencyException{ e.what() };
+    }
+}
+
+
+void Sheet::ValidPosition(Position pos) {
+    if (!pos.IsValid()) {
+        throw InvalidPositionException("invalid position"s);
     }
 }

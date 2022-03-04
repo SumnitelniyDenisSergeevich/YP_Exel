@@ -41,30 +41,8 @@ private:
     void EraseCell(Position pos);
     void UpdateSize();
     void CreateCellIfExceptionDeleteCell(Position pos, std::string text);
+    void ValidPosition(Position pos);
 
     Size size_;
     std::map<int, std::map<int, Cell>> row_col_cell_;
 };
-
-/*
-добавление строки - изменение ключа
-
-int main()
-{
-    std::map<std::string, std::string> capital { {"111", "555"}, {"222", "666"}, {"333", "444"} };
-    const std::string from = "111", to = "222";
-
-    if (auto nh = capital.extract(from); nh) {
-        nh.key() = to;
-        capital.insert(std::move(nh));
-    }
-
-    for (const auto& [key, value] : capital)
-        std::cout << key << " " << value << std::endl;
-}
-
- находим ключ, затем пока не конец мэп делаем экстракт и добавляем единицу 
- аналогично с столбцами, только двойной цикл, пройдя по всем строкам
-
-
-*/

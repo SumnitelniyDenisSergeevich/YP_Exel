@@ -52,7 +52,7 @@ CellInterface::Value FormulaImpl::GetValue(const SheetInterface& sheet) const {
 }
 
 std::string FormulaImpl::GetText() const {
-	return "="s + formula_->GetExpression();
+	return FORMULA_SIGN + formula_->GetExpression();
 }
 
 std::vector<Position> FormulaImpl::GetReferencedCells() const {
@@ -95,12 +95,7 @@ void Cell::Set(std::string text) {
 }
 
 void Cell::Clear() {
-	impl_ = std::make_unique<EmptyImpl>(EmptyImpl{});
-	InvalidateCashe();
-	for (Cell* cell : referenced_cells_) {
-		cell->dependent_cells_.erase(this);
-	}
-	referenced_cells_.clear();
+	Set(""s);
 }
 
 Cell::Value Cell::GetValue() const {
